@@ -11,7 +11,7 @@ from sqlalchemy.orm import sessionmaker
 app = FastAPI()
 
 # Database configuration
-DATABASE_URL = "postgresql://postgres:Kr9Rv[h{E%l1#+9I@interview-database.c6w2clm2o6mk.eu-central-1.rds.amazonaws.com/postgres"
+DATABASE_URL = "postgresql://placeforcredentials@interview-database.c6w2clm2o6mk.eu-central-1.rds.amazonaws.com/postgres"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

@@ -21,15 +21,11 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-venv/
-env/
-.venv/
-virtualenv/
-~/.interview/
 
 # Virtual Environment
 venv/
 env/
+.venv/
 ENV/
 
 # IDEs and Editors
@@ -48,6 +44,7 @@ Thumbs.db
 *.tfstate.*
 .terraform/
 *.tfvars
+.terraform.lock.hcl
 
 # Logs
 *.log
@@ -57,9 +54,8 @@ Thumbs.db
 *.bak
 *.swp
 
-# Ignore everything except...
-*
-!*/
+# Specific to your project
+.interview/
 
 # Do not ignore
 !*.py
