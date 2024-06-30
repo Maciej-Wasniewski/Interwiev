@@ -139,3 +139,95 @@ resource "aws_db_instance" "rds_database_interview" {
     Name = var.rds_database_name
   }
 }
+
+### ECR repository
+module "ecr_pytest" {
+  source          = "./modules/ecr"
+  repository_name = "pytest"
+}
+
+module "ecr_fastapi" {
+  source          = "./modules/ecr"
+  repository_name = "fastapi"
+}
+
+module "ecr_streamlit" {
+  source          = "./modules/ecr"
+  repository_name = "streamlit"
+}
+
+### ECS cluster
+resource "aws_ecs_cluster" "main" {
+  name = "${var.project_name}-cluster"
+
+  tags = {
+    Name        = "${var.project_name}-ecs-cluster"
+    ProjectName = var.project_name
+  }
+}
+
+# Security group for ECS tasks
+resource "aws_security_group" "ecs_tasks" {
+  name        = "${var.project_name}-ecs-tasks-sg"
+  description = "Allow inbound traffic for ECS tasks"
+  vpc_id      = data.aws_vpc.vps_rds.id
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name        = "${var.project_name}-ecs-tasks-sg"
+    ProjectName = var.project_name
+  }
+}
+
+# IAM role dla ECS task execution
+resource "aws_iam_role" "ecs_execution_role" {
+  name = "${var.project_name}-ecs-execution-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Name        = "${var.project_name}-ecs-execution-role"
+    ProjectName = var.project_name
+  }
+}
+
+# Attach policy to ECS execution role
+resource "aws_iam_role_policy_attachment" "ecs_execution_role_policy" {
+  role       = aws_iam_role.ecs_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+# CloudWatch Log Group for ECS
+resource "aws_cloudwatch_log_group" "ecs_logs" {
+  name              = "/ecs/${var.project_name}"
+  retention_in_days = 30
+
+  tags = {
+    Name        = "${var.project_name}-ecs-logs"
+    ProjectName = var.project_name
+  }
+}

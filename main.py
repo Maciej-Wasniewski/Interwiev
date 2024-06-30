@@ -1,3 +1,4 @@
+import os
 from datetime import date, datetime
 import re
 
@@ -11,7 +12,10 @@ from sqlalchemy.orm import sessionmaker
 app = FastAPI()
 
 # Database configuration
-DATABASE_URL = "postgresql://placeforcredentials@interview-database.c6w2clm2o6mk.eu-central-1.rds.amazonaws.com/postgres"
+DB_USER = os.getenv("DB_USER", "placeforcredentials")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "")
+DB_HOST = os.getenv("DB_HOST", "interview-database.c6w2clm2o6mk.eu-central-1.rds.amazonaws.com")
+DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/postgres"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
