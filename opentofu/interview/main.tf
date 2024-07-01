@@ -140,6 +140,27 @@ resource "aws_db_instance" "rds_database_interview" {
   }
 }
 
+resource "time_sleep" "wait_for_db" {
+  depends_on = [aws_db_instance.rds_database_interview]
+  create_duration = "10s"
+}
+
+resource "null_resource" "create_people_table" {
+  provisioner "local-exec" {
+    command = <<-EOF
+      PGPASSWORD=${local.db_creds.password} psql -h ${split(":", aws_db_instance.rds_database_interview.endpoint)[0]} -p ${split(":", aws_db_instance.rds_database_interview.endpoint)[1]} -U ${local.db_creds.username} -d ${var.rds_postgres_name} -c "
+        CREATE TABLE IF NOT EXISTS people (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(100) NOT NULL,
+          birth_day DATE NOT NULL,
+          CONSTRAINT check_birth_day CHECK (birth_day <= CURRENT_DATE)
+        );"
+    EOF
+  }
+
+  depends_on = [time_sleep.wait_for_db]
+}
+
 ### ECR repository
 module "ecr_pytest" {
   source          = "./modules/ecr"

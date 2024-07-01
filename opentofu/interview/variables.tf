@@ -33,3 +33,9 @@ variable "rds_database_name" {
   type        = string
   default     = "interview-database"
 }
+
+variable "rds_postgres_name" {
+  description = "name for instance rds"
+  type        = string
+  default     = "postgres"
+}

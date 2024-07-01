@@ -23,6 +23,5 @@ This project consists of a FastAPI backend, a Streamlit frontend, and a test sui
 1. Clone the repository
 2. Install opentofu and configure https://github.com/Maciej-Wasniewski/Interwiev/blob/main/opentofu/interview/backend.tf and https://github.com/Maciej-Wasniewski/Interwiev/blob/main/opentofu/interview/variables.tf (you need to change S3 bucket to keep state file, change dynamodb for session and change region for your AWS account) 
 3. Install awscli and configure connection for your AWS account
-4. Create infrastructure on AWS cloud using opentofu: "tofu init", "tofu plan", "tofu apply"
-5. Run sql script https://github.com/Maciej-Wasniewski/Interwiev/blob/main/people.sql to create table on postgres RDS (must find a way to automate this)
-6. 
+4. Install psql on your local machine
+5. Create infrastructure on AWS cloud using opentofu: "tofu init", "tofu plan", "tofu apply"
